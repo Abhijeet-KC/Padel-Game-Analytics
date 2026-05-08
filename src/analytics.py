@@ -35,6 +35,50 @@ class DirectionResolver:
                 hit["direction_end_pos"] = (ball_pos["x"], ball_pos["y"])
         return resolved_hits
 
+class BounceDetector:
+    def __init__(self, floor_threshold_ratio=0.8):
+        self.floor_threshold_ratio = floor_threshold_ratio
+        self.history = []
+        self.bounces = []
+
+    def process_frame(self, frame_num, ball_pos, frame_height):
+        if not ball_pos["visible"]:
+            return None
+            
+        y = ball_pos["y"]
+        self.history.append((frame_num, y))
+        
+        # Keep last 3 points to determine V change (t-2, t-1, t)
+        if len(self.history) > 3:
+            self.history.pop(0)
+            
+        if len(self.history) == 3:
+            y_t2 = self.history[0][1]
+            y_t1 = self.history[1][1]
+            y_t0 = self.history[2][1]
+            
+            # v1 is velocity from t-2 to t-1
+            # v2 is velocity from t-1 to t0
+            v1 = y_t1 - y_t2
+            v2 = y_t0 - y_t1
+            
+            # Bounce condition:
+            # 1. v1 > 0 (moving down, since y increases downwards)
+            # 2. v2 < 0 (moving up)
+            # 3. y_t1 > floor_threshold (it's in the lower portion of the screen)
+            
+            floor_threshold = frame_height * self.floor_threshold_ratio
+            if v1 > 0 and v2 < 0 and y_t1 > floor_threshold:
+                bounce_event = {
+                    "frame": self.history[1][0],
+                    "x": ball_pos["x"],
+                    "y": y_t1
+                }
+                self.bounces.append(bounce_event)
+                return bounce_event
+                
+        return None
+
 class HitDetector:
     def __init__(self, proximity_threshold=100, angle_change_threshold=45, speed_ratio_threshold=1.5):
         # Configuration based on Rule-based Logic in Guide.MD

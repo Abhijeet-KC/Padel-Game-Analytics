@@ -4,7 +4,7 @@ import os
 import csv
 from detection import PlayerRacketDetector
 from tracking import BallTracker
-from analytics import HitDetector, DirectionResolver
+from analytics import HitDetector, DirectionResolver, BounceDetector
 from classification import ShotClassifier
 
 def main():
@@ -24,6 +24,7 @@ def main():
     hit_detector = HitDetector()
     classifier = ShotClassifier()
     direction_resolver = DirectionResolver()
+    bounce_detector = BounceDetector(floor_threshold_ratio=0.8)
     
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
@@ -41,6 +42,7 @@ def main():
     frame_detections = {}
     ball_positions = {}
     classified_shots = []
+    bounces = []
     csv_data = [["frame", "x", "y", "visible"]]
     
     frame_count = 0
@@ -60,6 +62,12 @@ def main():
         ball_pos = ball_tracker.track(frame)
         ball_positions[frame_count] = ball_pos
         csv_data.append([frame_count, ball_pos["x"], ball_pos["y"], ball_pos["visible"]])
+        
+        # 2.5 Detect Bounces
+        bounce = bounce_detector.process_frame(frame_count, ball_pos, height)
+        if bounce:
+            bounces.append(bounce)
+            print(f"Frame {frame_count}: BOUNCE Detected at ({bounce['x']}, {bounce['y']})")
         
         # 3. Detect Hits
         hit = hit_detector.process_frame(frame_count, ball_pos, dets)
@@ -105,6 +113,13 @@ def main():
         if ball_pos["visible"]:
             cv2.circle(frame, (ball_pos["x"], ball_pos["y"]), 6, (0, 0, 255), -1)
             
+        # 7. Annotate Bounces
+        for b in bounces:
+            # only show bounce for a few frames after it happens
+            if 0 <= (frame_count - b["frame"]) < 30:
+                cv2.circle(frame, (b["x"], int(b["y"])), 15, (255, 0, 0), 3)
+                cv2.putText(frame, "BOUNCE", (b["x"] - 30, int(b["y"]) - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
+            
         # Write frame
         out.write(frame)
         frame_count += 1
@@ -120,7 +135,8 @@ def main():
         json.dump({
             "players_rackets": frame_detections, 
             "ball_positions": ball_positions, 
-            "classified_shots": classified_shots
+            "classified_shots": classified_shots,
+            "bounces": bounces
         }, f, indent=4)
         
     with open(output_csv_path, 'w', newline='') as f:
@@ -130,6 +146,14 @@ def main():
     print(f"\nStep 5 Finished successfully!")
     print(f"Annotated video saved to: {output_video_path}")
     print(f"Detections JSON saved to: {output_json_path}")
+
+    # Generate analytical dashboard
+    print("Generating Analytics Dashboard...")
+    try:
+        from visualize import generate_dashboard
+        generate_dashboard(output_json_path, output_csv_path, "data/output/dashboard.png")
+    except Exception as e:
+        print(f"Could not generate dashboard: {e}")
 
 if __name__ == "__main__":
     main()
