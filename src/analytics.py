@@ -1,6 +1,40 @@
 import csv
 import math
 
+class DirectionResolver:
+    def __init__(self, frames_to_wait=15, dx_threshold=40):
+        self.frames_to_wait = frames_to_wait
+        self.dx_threshold = dx_threshold
+        self.pending_hits = []
+
+    def add_hit(self, hit_event):
+        """Register a new hit event to trace direction later."""
+        self.pending_hits.append(hit_event)
+
+    def process_frame(self, frame_num, ball_pos):
+        """Check if any pending hits have reached frame+15 to resolve their direction."""
+        resolved_hits = []
+        for hit in self.pending_hits[:]:
+            if frame_num >= hit["frame"] + self.frames_to_wait:
+                if ball_pos["visible"]:
+                    dx = ball_pos["x"] - hit["ball_x"]
+                    if dx > self.dx_threshold:
+                        direction = "right"
+                    elif dx < -self.dx_threshold:
+                        direction = "left"
+                    else:
+                        direction = "center"
+                else:
+                    direction = "unknown"
+                
+                hit["direction"] = direction
+                self.pending_hits.remove(hit)
+                resolved_hits.append(hit)
+                
+                # Also store the end position for visualization
+                hit["direction_end_pos"] = (ball_pos["x"], ball_pos["y"])
+        return resolved_hits
+
 class HitDetector:
     def __init__(self, proximity_threshold=100, angle_change_threshold=45, speed_ratio_threshold=1.5):
         # Configuration based on Rule-based Logic in Guide.MD

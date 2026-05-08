@@ -4,7 +4,7 @@ import os
 import csv
 from detection import PlayerRacketDetector
 from tracking import BallTracker
-from analytics import HitDetector
+from analytics import HitDetector, DirectionResolver
 from classification import ShotClassifier
 
 def main():
@@ -23,6 +23,7 @@ def main():
     ball_tracker = BallTracker(mode='fallback')
     hit_detector = HitDetector()
     classifier = ShotClassifier()
+    direction_resolver = DirectionResolver()
     
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
@@ -67,9 +68,32 @@ def main():
         if hit:
             shot_type = classifier.classify_shot(frame, hit)
             hit["shot_type"] = shot_type
+            hit["direction"] = "pending"
             classified_shots.append(hit)
+            direction_resolver.add_hit(hit)
             print(f"Frame {frame_count}: Player - {shot_type.upper()}")
             cv2.putText(frame, f"HIT: {shot_type.upper()}", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 3)
+
+        # 4.5 Resolve Shot Direction
+        resolved_hits = direction_resolver.process_frame(frame_count, ball_pos)
+        for rh in resolved_hits:
+            print(f"Frame {rh['frame']} hit direction resolved: {rh['direction'].upper()}")
+            
+            # Draw arrow on frame from hit position toward end position
+            if rh["direction"] != "unknown" and "direction_end_pos" in rh:
+                start_point = (int(rh["ball_x"]), int(rh["ball_y"]))
+                end_point = (int(rh["direction_end_pos"][0]), int(rh["direction_end_pos"][1]))
+                
+                # Determine arrow color based on shot type Guide
+                color = (0, 255, 0) # default green
+                if rh["shot_type"] == "forehand":
+                    color = (0, 255, 0)
+                elif rh["shot_type"] == "backhand":
+                    color = (0, 0, 255)
+                elif rh["shot_type"] in ["serve", "smash"]:
+                    color = (0, 255, 255)
+                    
+                cv2.arrowedLine(frame, start_point, end_point, color, 3, tipLength=0.2)
             
         # 5. Annotate bounding boxes
         for det in dets:
