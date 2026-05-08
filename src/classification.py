@@ -1,10 +1,15 @@
 import cv2
 import mediapipe as mp
+from mediapipe.tasks import python
+from mediapipe.tasks.python import vision
 
 class ShotClassifier:
-    def __init__(self):
-        self.mp_pose = mp.solutions.pose
-        self.pose = self.mp_pose.Pose(static_image_mode=True, min_detection_confidence=0.5)
+    def __init__(self, model_path='models/pose_landmarker_lite.task'):
+        base_options = python.BaseOptions(model_asset_path=model_path)
+        options = vision.PoseLandmarkerOptions(
+            base_options=base_options,
+            output_segmentation_masks=False)
+        self.detector = vision.PoseLandmarker.create_from_options(options)
 
     def classify_shot(self, frame, hit_event):
         """
@@ -23,18 +28,21 @@ class ShotClassifier:
             return "unknown"
             
         player_rgb = cv2.cvtColor(player_crop, cv2.COLOR_BGR2RGB)
-        results = self.pose.process(player_rgb)
+        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=player_rgb)
+        
+        results = self.detector.detect(mp_image)
         
         if not results.pose_landmarks:
             return "unknown"
             
-        landmarks = results.pose_landmarks.landmark
+        # Landmarks for first detected person
+        landmarks = results.pose_landmarks[0]
         
-        # Extract required landmarks (using value indices)
-        r_wrist = landmarks[self.mp_pose.PoseLandmark.RIGHT_WRIST.value]
-        l_wrist = landmarks[self.mp_pose.PoseLandmark.LEFT_WRIST.value]
-        r_shoulder = landmarks[self.mp_pose.PoseLandmark.RIGHT_SHOULDER.value]
-        l_shoulder = landmarks[self.mp_pose.PoseLandmark.LEFT_SHOULDER.value]
+        # Extract required landmarks (by index)
+        l_shoulder = landmarks[11]
+        r_shoulder = landmarks[12]
+        l_wrist = landmarks[15]
+        r_wrist = landmarks[16]
         
         # Check Serve/Smash: Wrist higher than shoulder (In images, smaller Y is higher up)
         threshold = 0.1 # roughly 10% of crop height
