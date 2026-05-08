@@ -5,22 +5,24 @@ import csv
 from detection import PlayerRacketDetector
 from tracking import BallTracker
 from analytics import HitDetector
+from classification import ShotClassifier
 
 def main():
     # Setup input/output paths
     video_path = "videos/input_sample_video.mp4"
-    output_video_path = "data/output/step4_annotated_video.mp4"
-    output_json_path = "data/output/step4_detections.json"
+    output_video_path = "data/output/step5_annotated_video.mp4"
+    output_json_path = "data/output/step5_detections.json"
     output_csv_path = "data/output/ball_trajectory.csv"
     
     if not os.path.exists(video_path):
         print(f"Error: Could not find input video at {video_path}")
         return
 
-    print("Initializing Detectors and Trackers...")
+    print("Initializing Detectors, Trackers and Classifiers...")
     detector = PlayerRacketDetector(model_path="models/yolov8n.pt")
     ball_tracker = BallTracker(mode='fallback')
     hit_detector = HitDetector()
+    classifier = ShotClassifier()
     
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
@@ -37,7 +39,7 @@ def main():
     
     frame_detections = {}
     ball_positions = {}
-    hit_events = []
+    classified_shots = []
     csv_data = [["frame", "x", "y", "visible"]]
     
     frame_count = 0
@@ -61,20 +63,23 @@ def main():
         # 3. Detect Hits
         hit = hit_detector.process_frame(frame_count, ball_pos, dets)
         
-        # 4. Annotate bounding boxes
+        # 4. Classify Shot if hit occurred
+        if hit:
+            shot_type = classifier.classify_shot(frame, hit)
+            hit["shot_type"] = shot_type
+            classified_shots.append(hit)
+            print(f"Frame {frame_count}: Player - {shot_type.upper()}")
+            cv2.putText(frame, f"HIT: {shot_type.upper()}", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 3)
+            
+        # 5. Annotate bounding boxes
         for det in dets:
             x1, y1, x2, y2 = det["bbox"]
             color = (0, 255, 0) if det['class'] == 'player' else (0, 0, 255)
             cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
             
-        # 5. Annotate Ball and Hits
+        # 6. Annotate Ball
         if ball_pos["visible"]:
             cv2.circle(frame, (ball_pos["x"], ball_pos["y"]), 6, (0, 0, 255), -1)
-            
-        if hit:
-            hit_events.append(hit)
-            print(f"HIT DETECTED at frame {frame_count}")
-            cv2.putText(frame, "HIT EVENT!", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 3)
             
         # Write frame
         out.write(frame)
@@ -88,13 +93,17 @@ def main():
     
     # Save structured detection data
     with open(output_json_path, 'w') as f:
-        json.dump({"players_rackets": frame_detections, "ball_positions": ball_positions, "hit_events": hit_events}, f, indent=4)
+        json.dump({
+            "players_rackets": frame_detections, 
+            "ball_positions": ball_positions, 
+            "classified_shots": classified_shots
+        }, f, indent=4)
         
     with open(output_csv_path, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerows(csv_data)
         
-    print(f"\nSteps 3 & 4 Finished successfully!")
+    print(f"\nStep 5 Finished successfully!")
     print(f"Annotated video saved to: {output_video_path}")
     print(f"Detections JSON saved to: {output_json_path}")
 
