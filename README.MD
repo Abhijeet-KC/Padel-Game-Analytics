@@ -68,7 +68,11 @@ All executed results and model predictions are placed in `outputs/`. The active 
 
 - **`inference_annotated_video.mp4`**: Fully annotated inference video showing player bounding boxes (green), racket bounds (red), tracked ball path (red/orange interpolated), hitting events, and directional trajectories.
 * **`inference_ball_trajectory.csv`**: Frame-by-frame ball coordinate tracing. Contains fields `[frame, x, y, visible, interpolated]` for precise trajectory analysis.
-* **`inference_detections.json`**: Structured JSON metadata containing shot predictions, frame detections, and bounce occurrences `{"frame", "x", "y"}`.
+* **`inference_detections.json`**: Structured JSON metadata containing the complete pipeline tracking data:
+  * `players_rackets`: Bounding boxes `[x1, y1, x2, y2]`, `class` (`player`/`racket`), and `conf` score per frame.
+  * `ball_positions`: Frame-by-frame ball coordinates `{"x", "y", "visible", "interpolated"}`.
+  * `classified_shots`: Hit events detailing the `frame`, `shot_type` (e.g., forehand), `direction`, and the hitter's `player_bbox`.
+  * `bounces`: Identified court bounce occurrences `{"frame", "x", "y"}`.
 * **`dashboard.png`**: The rendered matplotlib visualizations shown below.
 
 ### Analytical Dashboard

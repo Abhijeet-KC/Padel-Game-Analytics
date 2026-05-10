@@ -80,14 +80,16 @@ class BounceDetector:
         return None
 
 class HitDetector:
-    def __init__(self, proximity_threshold=100, angle_change_threshold=45, speed_ratio_threshold=1.5):
+    def __init__(self, proximity_threshold=100, angle_change_threshold=45, speed_ratio_threshold=1.5, cooldown_frames=15):
         # Configuration based on Rule-based Logic in Guide.MD
         self.proximity_threshold = proximity_threshold
         self.angle_change_threshold = angle_change_threshold
         self.speed_ratio_threshold = speed_ratio_threshold
+        self.cooldown_frames = cooldown_frames
         
         self.ball_history = []
         self.hit_events = []
+        self.last_hit_frame = -999
 
     def process_frame(self, frame_num, ball_pos, players_dets):
         if not ball_pos["visible"]:
@@ -123,16 +125,18 @@ class HitDetector:
                 
                 # We'll need a velocity history to calculate angle_change and speed_ratio
                 if dist < self.proximity_threshold:
-                    # For now, flag as potential hit event space when ball is very near player.
-                    # We will implement full velocity-ratio checks when velocity history is added
-                    hit = {
-                        "frame": frame_num,
-                        "ball_x": t[1],
-                        "ball_y": t[2],
-                        "player_bbox": nearest_player["bbox"],
-                        "timestamp_sec": round(frame_num / 30.0, 2)  # Assuming 30fps default
-                    }
-                    return hit
+                    if frame_num - self.last_hit_frame > self.cooldown_frames:
+                        # For now, flag as potential hit event space when ball is very near player.
+                        # We will implement full velocity-ratio checks when velocity history is added
+                        hit = {
+                            "frame": frame_num,
+                            "ball_x": t[1],
+                            "ball_y": t[2],
+                            "player_bbox": nearest_player["bbox"],
+                            "timestamp_sec": round(frame_num / 30.0, 2)  # Assuming 30fps default
+                        }
+                        self.last_hit_frame = frame_num
+                        return hit
         return None
         
     def _get_nearest_player_bbox(self, bx, by, detections):
