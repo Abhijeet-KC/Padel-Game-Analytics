@@ -2,12 +2,25 @@
 
 An automated pipeline aimed at detecting players, rackets, and balls in padel games, tracking trajectories, identifying bounce/hit events, and classifying shot types (Forehand, Backhand, Serve, Smash).
 
-## Output & Results
-The pipeline successfully generates:
-- **`data/output/inference_annotated_video.mp4`**: Fully annotated inference video showing player bounding boxes (green), racket bounds, tracked ball path (red), hitting events, and directional trajectories.
-- **`data/output/inference_ball_trajectory.csv`**: Frame-by-frame ball coordinate tracing.
-- **`data/output/inference_detections.json`**: Structured metadata covering frame detections, bounce occurrences, and shot classifications.
-- **`data/output/dashboard.png`**: Analytical dashboard summarizing shot distributions and bounce geometries.
+## 🚀 Demo & Notebooks
+To ensure this repository is primarily classified as a Python project, the Heavy Jupyter Notebooks (used for model fine-tuning) and the high-resolution demo videos have been moved externally. 
+
+🔗 **[View Demo Video & Development Notebooks (External Drive Link)](#)**
+*(Update the link above with the actual drive folder containing `inference_annotated_video.mp4` and `yolo-finetune-padel.ipynb`)*
+
+## 📊 Output & Results
+The pipeline successfully generates analytics files detailing the game. Below is the output structure and visual representation.
+
+### Analytical Dashboard
+![Analytical Dashboard](data/output/dashboard.png)
+*The dashboard summarizes shot distributions (Forehand vs Backhand vs Serve/Smash) and maps bounce geometries across the court space.*
+
+### Generated Output Files
+All executed results are placed in `data/output/`:
+- **`inference_annotated_video.mp4`**: Fully annotated inference video showing player bounding boxes (green), racket bounds (red), tracked ball path (red/orange interpolated), hitting events, and directional trajectories.
+- **`inference_ball_trajectory.csv`**: Frame-by-frame ball coordinate tracing. Contains fields `[frame, x, y, visible, interpolated]` for precise trajectory analysis.
+- **`inference_detections.json`**: Structured metadata covering frame detections, bounce occurrences `{"frame", "x", "y"}`, and detailed shot classifications.
+- **`dashboard.png`**: The rendered matplotlib visualizations shown above.
 
 ## Experimental Journey & Architecture
 
