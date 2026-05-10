@@ -2,15 +2,10 @@
 
 An automated pipeline aimed at detecting players, rackets, and balls in padel games, tracking trajectories, identifying bounce/hit events, and classifying shot types (Forehand, Backhand, Serve, Smash).
 
-## Technology Stack
-
-![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![YOLOv8](https://img.shields.io/badge/YOLOv8-Object%20Detection-00FFFF?style=for-the-badge&logo=yolo&logoColor=black)
-![Ultralytics](https://img.shields.io/badge/Ultralytics-v8.4.48-4B0082?style=for-the-badge&logo=ultralytics&logoColor=white)
-![OpenCV](https://img.shields.io/badge/OpenCV-4.x-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white)
-![MediaPipe](https://img.shields.io/badge/MediaPipe-Pose-0F9D58?style=for-the-badge&logo=google&logoColor=white)
-![PyTorch](https://img.shields.io/badge/PyTorch-2.7.1-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)
-![SciPy](https://img.shields.io/badge/SciPy-1.17.1-8CAAE6?style=for-the-badge&logo=scipy&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white&labelColor=333)
+![YOLOv8](https://img.shields.io/badge/YOLOv8-Ultralytics-FF9900?style=flat-square&logo=ultralytics&logoColor=white&labelColor=333)
+![OpenCV](https://img.shields.io/badge/OpenCV-4.x-5C3EE8?style=flat-square&logo=opencv&logoColor=white&labelColor=333)
+![MediaPipe](https://img.shields.io/badge/MediaPipe-Pose-E84E31?style=flat-square&logo=google&logoColor=white&labelColor=333)
 
 Built utilizing the following open-source tools and official library versions:
 
@@ -29,7 +24,7 @@ Watch the full inference demo of the pipeline directly below:
 <https://github.com/user-attachments/assets/9baa9f92-3c47-43bd-88a0-dcf8626d2fb2>
 
 > [!TIP]
-> If the video player does not render, you can **[⬇ Download and watch the demo video](https://github.com/Abhijeet-KC/Padel-Game-Analytics/raw/main/demo/Demo_Project.mp4)** directly.
+> If the video player does not render, you can **[Download and watch the demo video](https://github.com/Abhijeet-KC/Padel-Game-Analytics/raw/main/demo/Demo_Project.mp4)** directly.
 
 ## Setup & Installation
 
@@ -67,9 +62,9 @@ All executed results and model predictions are placed in `outputs/`. The active 
 
 | Resource | Description | Link |
 |----------|-------------|------|
-| **Models** | Pre-trained weights (`yolo26m.pt`, `pose_landmarker_lite.task`) | [📦 Download Models](https://drive.google.com/drive/folders/1yXoMPRGNs4v-Mx5jb14oNPtKsxG1chT_?usp=sharing) |
-| **Outputs** | Inference results (`input_sample`, `output_sample`) | [📊 Download Outputs](https://drive.google.com/drive/folders/1AUZrU__NhSJBsWXvNAnz0mHCQ3D80dho?usp=sharing) |
-| **Experiments** | Experiment logs & showcasing | [🧪 View Experiments](https://drive.google.com/drive/folders/1HICHLRc3eePfdqziHNJaPCXPhy-4PmJZ?usp=sharing) |
+| **Models** | Pre-trained weights (`yolo26m.pt`, `pose_landmarker_lite.task`) | [Download Models](https://drive.google.com/drive/folders/1yXoMPRGNs4v-Mx5jb14oNPtKsxG1chT_?usp=sharing) |
+| **Outputs** | Inference results (`input_sample`, `output_sample`) | [Download Outputs](https://drive.google.com/drive/folders/1AUZrU__NhSJBsWXvNAnz0mHCQ3D80dho?usp=sharing) |
+| **Experiments** | Experiment logs & showcasing | [View Experiments](https://drive.google.com/drive/folders/1HICHLRc3eePfdqziHNJaPCXPhy-4PmJZ?usp=sharing) |
 
 - **`inference_annotated_video.mp4`**: Fully annotated inference video showing player bounding boxes (green), racket bounds (red), tracked ball path (red/orange interpolated), hitting events, and directional trajectories.
 * **`inference_ball_trajectory.csv`**: Frame-by-frame ball coordinate tracing. Contains fields `[frame, x, y, visible, interpolated]` for precise trajectory analysis.
