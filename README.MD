@@ -58,7 +58,7 @@ Watch the full inference demo of the pipeline directly below:
 
 All executed results and model predictions are placed in `outputs/`. The active models utilized are `models/yolo26m.pt` (Object tracking natively) and `models/pose_landmarker_lite.task` (Mediapipe pose heuristics).
 
-### 📥 Download Links (Google Drive)
+### Download Links (Google Drive)
 
 | Resource | Description | Link |
 |----------|-------------|------|
