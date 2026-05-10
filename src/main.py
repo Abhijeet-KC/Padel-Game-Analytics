@@ -19,7 +19,7 @@ def main():
         return
 
     print("Initializing Detectors, Trackers and Classifiers...")
-    detector = PlayerRacketDetector(model_path="models/yolov8n.pt")
+    detector = PlayerRacketDetector(model_path="models/yolo26m.pt")
     ball_tracker = BallTracker(mode='fallback')
     hit_detector = HitDetector()
     classifier = ShotClassifier()
