@@ -90,7 +90,7 @@ def generate_dashboard(json_path, csv_path, output_png):
 
 if __name__ == "__main__":
     generate_dashboard(
-        json_path="data/output/step5_detections.json",
-        csv_path="data/output/ball_trajectory.csv",
-        output_png="data/output/dashboard.png"
+        json_path="outputs/inference_detections.json",
+        csv_path="outputs/inference_ball_trajectory.csv",
+        output_png="outputs/dashboard.png"
     )

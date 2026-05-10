@@ -10,9 +10,9 @@ from classification import ShotClassifier
 def main():
     # Setup input/output paths
     video_path = "videos/inference_sample_video.mp4"
-    output_video_path = "data/output/inference_annotated_video.mp4"
-    output_json_path = "data/output/inference_detections.json"
-    output_csv_path = "data/output/inference_ball_trajectory.csv"
+    output_video_path = "outputs/inference_annotated_video.mp4"
+    output_json_path = "outputs/inference_detections.json"
+    output_csv_path = "outputs/inference_ball_trajectory.csv"
     
     if not os.path.exists(video_path):
         print(f"Error: Could not find input video at {video_path}")
@@ -151,7 +151,7 @@ def main():
     print("Generating Analytics Dashboard...")
     try:
         from visualize import generate_dashboard
-        generate_dashboard(output_json_path, output_csv_path, "data/output/dashboard.png")
+        generate_dashboard(output_json_path, output_csv_path, "outputs/dashboard.png")
     except Exception as e:
         print(f"Could not generate dashboard: {e}")
 
