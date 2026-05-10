@@ -64,7 +64,7 @@ All executed results and model predictions are placed in `outputs/`. The active 
 |----------|-------------|------|
 | **Models** | Pre-trained weights (`yolo26m.pt`, `pose_landmarker_lite.task`) | [Download Models](https://drive.google.com/drive/folders/1yXoMPRGNs4v-Mx5jb14oNPtKsxG1chT_?usp=sharing) |
 | **Outputs** | Inference results (`input_sample`, `output_sample`) | [Download Outputs](https://drive.google.com/drive/folders/1AUZrU__NhSJBsWXvNAnz0mHCQ3D80dho?usp=sharing) |
-| **Experiments** | Experiment logs & showcasing | [View Experiments](https://drive.google.com/drive/folders/1HICHLRc3eePfdqziHNJaPCXPhy-4PmJZ?usp=sharing) |
+| **Experiments** | Experiment with model fine-tuning and open source model| [View Experiments](https://drive.google.com/drive/folders/1HICHLRc3eePfdqziHNJaPCXPhy-4PmJZ?usp=sharing) |
 
 - **`inference_annotated_video.mp4`**: Fully annotated inference video showing player bounding boxes (green), racket bounds (red), tracked ball path (red/orange interpolated), hitting events, and directional trajectories.
 * **`inference_ball_trajectory.csv`**: Frame-by-frame ball coordinate tracing. Contains fields `[frame, x, y, visible, interpolated]` for precise trajectory analysis.
