@@ -22,21 +22,20 @@ An automated pipeline aimed at detecting players, rackets, and balls in padel ga
    python src/main.py
    ```
 
-## 🚀 Demo & Notebooks
-To ensure this repository is primarily classified as a Python project, the Heavy Jupyter Notebooks (used for model fine-tuning) and the high-resolution demo videos have been moved externally. 
+## 🚀 Demo Video
+Watch the full inference demo of the pipeline directly below:
 
-🔗 **[View Demo Video & Development Notebooks (External Drive Link)](#)**
-*(Update the link above with the actual drive folder containing `inference_annotated_video.mp4` and `yolo-finetune-padel.ipynb`)*
+https://github.com/Abhijeet-KC/Padel-Game-Analytics/raw/main/demo/Demo_Project.mp4
 
 ## 📊 Output Files & Models
-All executed results and model predictions are placed in `data/output/`. The active models utilized are `models/yolo26m.pt` (Object tracking natively) and `models/pose_landmarker_lite.task` (Mediapipe pose heuristics).
+All executed results and model predictions are placed in `outputs/`. The active models utilized are `models/yolo26m.pt` (Object tracking natively) and `models/pose_landmarker_lite.task` (Mediapipe pose heuristics).
 - **`inference_annotated_video.mp4`**: Fully annotated inference video showing player bounding boxes (green), racket bounds (red), tracked ball path (red/orange interpolated), hitting events, and directional trajectories.
 - **`inference_ball_trajectory.csv`**: Frame-by-frame ball coordinate tracing. Contains fields `[frame, x, y, visible, interpolated]` for precise trajectory analysis.
 - **`inference_detections.json`**: Structured JSON metadata containing shot predictions, frame detections, and bounce occurrences `{"frame", "x", "y"}`.
 - **`dashboard.png`**: The rendered matplotlib visualizations shown below.
 
 ### Analytical Dashboard
-![Analytical Dashboard](data/output/dashboard.png)
+![Analytical Dashboard](outputs/dashboard.png)
 *The dashboard summarizes shot distributions (Forehand vs Backhand vs Serve/Smash) and maps bounce geometries across the court space.*
 
 ## 🧠 Methodology & Approach Explanation
