@@ -23,10 +23,8 @@ class UnifiedObjectTracker:
         Runs YOLO with bytetrack to keep consistent IDs.
         Filters players based on racket proximity and assigns Player A/B names.
         """
-        # Run inference using ByteTrack
         results = self.model.track(frame, persist=True, tracker="bytetrack.yaml", 
                                    classes=self.target_classes, device=self.device, verbose=False)[0]
-        
         raw_players = []
         rackets = []
         balls = []

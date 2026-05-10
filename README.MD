@@ -78,13 +78,13 @@ All executed results and model predictions are placed in `outputs/`. The active 
 
 ## Methodology & Approach Explanation
 
-Our fundamental approach involves a multi-pass vision pipeline leveraging YOLO object detection combined with Scipy-based motion interpolation and heuristic tracking logic:
+The fundamental approach involved a multi-pass vision pipeline leveraging YOLO object detection combined with SciPy-based motion interpolation and heuristic tracking logic:
 
-1. **Detection & Tracking (Pass 1):** Utilized `yolo26m.pt` with native ByteTrack (`bytetrack.yaml`) assigning consistent cross-frame IDs natively for Players, Rackets, and Balls. We applied localized heuristics to filter out background players by clamping legitimate player IDs strictly to bounding boxes overlapping with recognized padel rackets.
-2. **Ball Interpolation (Pass 2):** To handle high-speed motion blur and frame occlusion, we extracted the subset of visible ball frames and applied **`scipy.interpolate.interp1d`** (linear interpolation) to perfectly bridge and estimate missing sub-trajectories smoothly.
+1. **Detection & Tracking (Pass 1):** Utilized `yolo26m.pt` with native ByteTrack (`bytetrack.yaml`) assigning consistent cross-frame IDs natively for Players, Rackets, and Balls. Localized heuristics were applied to filter out background players by clamping legitimate player IDs strictly to bounding boxes overlapping with recognized padel rackets.
+2. **Ball Interpolation (Pass 2):** To handle high-speed motion blur and frame occlusion, the subset of visible ball frames was extracted and **`scipy.interpolate.interp1d`** (linear interpolation) was applied to bridge and estimate missing sub-trajectories smoothly.
 3. **Event Analytics & Shot Classification (Pass 3):**
-   * **Bounce Detection:** Calculus-based velocity extrema—if the ball was accelerating downwards (y-axis velocity > 0) and instantly deflects upward (< 0) within the court's lower threshold ratio (0.8), it is logged as a bounce.
-   * **Spine-Based Shot Classification:** For detected hits, we passed the cropped player bounding box securely into Mediapipe's `pose_landmarker_lite`. By calculating the midpoint between the left and right shoulders (`spine_x`), we compared the ball's X coordinate to the spine's position. Factoring in handedness mapping (which wrist is closer), we accurately classify `Forehand` vs `Backhand`. `Serve` and `Smash` are classified dynamically using vertical wrist-to-shoulder ratios.
+   * **Bounce Detection:** Calculus-based velocity extrema: if the ball was accelerating downwards (y-axis velocity > 0) and instantly deflected upward (< 0) within the court's lower threshold ratio (0.8), it was logged as a bounce.
+   * **Spine-Based Shot Classification:** For detected hits, the cropped player bounding box was passed securely into MediaPipe's `pose_landmarker_lite`. By calculating the midpoint between the left and right shoulders (`spine_x`), the ball's X coordinate was compared to the spine's position. Factoring in handedness mapping (which wrist is closer), shots were classified as `Forehand` or `Backhand`. `Serve` and `Smash` were classified dynamically using vertical wrist-to-shoulder ratios.
 
 During development, multiple neural network architectures were formally evaluated:
 * **Baseline YOLOv8n:** Struggled heavily with tracking consistency and completely failed at racket identification.
