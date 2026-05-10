@@ -9,10 +9,10 @@ from classification import ShotClassifier
 
 def main():
     # Setup input/output paths
-    video_path = "videos/input_sample_video.mp4"
-    output_video_path = "data/output/step5_annotated_video.mp4"
-    output_json_path = "data/output/step5_detections.json"
-    output_csv_path = "data/output/ball_trajectory.csv"
+    video_path = "videos/inference_sample_video.mp4"
+    output_video_path = "data/output/inference_annotated_video.mp4"
+    output_json_path = "data/output/inference_detections.json"
+    output_csv_path = "data/output/inference_ball_trajectory.csv"
     
     if not os.path.exists(video_path):
         print(f"Error: Could not find input video at {video_path}")
